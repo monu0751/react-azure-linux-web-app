@@ -23,9 +23,9 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: 'react-linux-web-app'    # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '18.0'                # set this to the node version to use
+  AZURE_WEBAPP_NAME: 'react-linux-web-app'
+  AZURE_WEBAPP_PACKAGE_PATH: './build'   # Set to the path of the build folder
+  NODE_VERSION: '18.0'
 
 permissions:
   contents: read
@@ -47,8 +47,9 @@ jobs:
         npm install
         npm run build --if-present
         npm run test --if-present
+
     - run: |
-        zip -r node-app.zip .
+        zip -r node-app.zip ./build
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
@@ -79,4 +80,4 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}  # Set to the build folder
